@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Conversation {
+  id                  String               @id @default(uuid())
+  title               String
+  creatorId           String
+  updatedAt           DateTime             @updatedAt
+  createdAt           DateTime             @default(now())
+  type                TypeConversation     @default(PRIVATE)
+  deletedConversation DeletedConversation?
+  participant         Participant[]
+  message             Message[]
+}
+
+enum TypeConversation {
+  PRIVATE
+  GROUP
+  ANONYMOUS
+}
+
+model Participant {
+  id           String         @id @default(uuid())
+  userId       String
+  updatedAt    DateTime       @updatedAt
+  createdAt    DateTime       @default(now())
+  memberRole   MemberRole     @default(MEMBER)
+  conversation Conversation[]
+}
+
+model Message {
+  id                String              @id @default(uuid())
+  senderId          String
+  message           String
+  messageStatus     MessageStatus       @default(SENDING)
+  updatedAt         DateTime            @updatedAt
+  createdAt         DateTime            @default(now())
+  deletedAt         DateTime?
+  deletedMessage    DeletedMessage?
+  conversation      Conversation        @relation(fields: [conversationId], references: [id])
+  conversationId    String
+  attachmentMessage AttachmentMessage[]
+}
+
+enum MessageStatus {
+  SENDING
+  SEND
+  FAILED
+}
+
+enum MemberRole {
+  MEMBER
+  ADMIN
+}
+
+model DeletedConversation {
+  id             String       @id @default(uuid())
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String       @unique
+  userId         String
+  createdAt      DateTime     @default(now())
+}
+
+model DeletedMessage {
+  id        String  @id @default(uuid())
+  message   Message @relation(fields: [messageId], references: [id])
+  messageId String  @unique
+}
+
+model AttachmentMessage {
+  id           String   @id @default(uuid())
+  message      Message  @relation(fields: [messageId], references: [id])
+  messageId    String
+  thumbnailUrl String
+  fileUrl      String
+  updatedAt    DateTime @updatedAt
+  createdAt    DateTime @default(now())
+}
