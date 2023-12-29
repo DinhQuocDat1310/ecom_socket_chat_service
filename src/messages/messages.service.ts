@@ -255,11 +255,23 @@ export class MessagesService {
           });
         },
       );
+      //Get all participants in conversation to notifications
+      const members = await this.prismaService.participant.findMany({
+        where: {
+          conversation: {
+            every: {
+              id: message.conversationId,
+            },
+          },
+        },
+      });
+
       //[Send Message] - Push notification
       user['notify_type'] = NOTIFICATION_NEW_MESSAGE;
       user['messages'] = message;
+      user['members'] = members;
       await lastValueFrom(
-        this.notificationClient.emit('send_notification', user),
+        this.notificationClient.emit('send_notification_to_another', user),
       );
       return message;
     } catch (error) {
