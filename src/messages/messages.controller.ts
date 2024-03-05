@@ -24,7 +24,6 @@ import {
   PrivateConversationDTO,
   GroupConversationDTO,
 } from './dto/conversation.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { MessageDTO } from './dto/message.dto';
 
 @Controller('messages')
@@ -32,10 +31,7 @@ import { MessageDTO } from './dto/message.dto';
 @ApiBearerAuth('access-token')
 @ApiTags('Message Chat')
 export class MessagesController {
-  constructor(
-    private readonly messagesService: MessagesService,
-    private readonly eventEmitter: EventEmitter2,
-  ) {}
+  constructor(private readonly messagesService: MessagesService) {}
 
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -88,19 +84,21 @@ export class MessagesController {
     );
   }
 
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiForbiddenResponse({ description: 'Forbidden' })
-  @ApiOkResponse({ description: 'Ok' })
-  @ApiOperation({ summary: 'Create a new message' })
-  @ApiBody({ type: MessageDTO })
-  @Post('')
-  async createMessage(@Request() userReq: any, @Body() messageDto: MessageDTO) {
-    const message = await this.messagesService.createMessage(
-      userReq.user,
-      messageDto,
-    );
-    this.eventEmitter.emit('message.create', message);
-    return message;
-  }
+  // @ApiBadRequestResponse({ description: 'Bad Request' })
+  // @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  // @ApiForbiddenResponse({ description: 'Forbidden' })
+  // @ApiOkResponse({ description: 'Ok' })
+  // @ApiOperation({ summary: 'Create a new message' })
+  // @ApiBody({ type: MessageDTO })
+  // @Post('')
+  // async createMessage(@Request() userReq: any, @Body() messageDto: MessageDTO) {
+  //   const message = await this.messagesService.createMessage(
+  //     userReq.user,
+  //     messageDto,
+  //   );
+  //   //Emit Event: message.create
+  //   //Emit Data: message
+  //   this.eventEmitter.emit('message.create', message);
+  //   return message;
+  // }
 }
