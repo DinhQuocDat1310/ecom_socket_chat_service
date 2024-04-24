@@ -17,7 +17,12 @@ import {
   PrivateConversationDTO,
   GroupConversationDTO,
 } from './dto/conversation.dto';
-import { MemberRole, MessageStatus, TypeConversation } from '@prisma/client';
+import {
+  Conversation,
+  MemberRole,
+  MessageStatus,
+  TypeConversation,
+} from '@prisma/client';
 import { MessageDTO } from './dto/message.dto';
 
 @Injectable()
@@ -302,5 +307,13 @@ export class MessagesService {
     });
     if (!conservation)
       throw new BadRequestException('Conservation ID not found');
+  };
+
+  getConversationByID = async (id: string): Promise<Conversation> => {
+    return await this.prismaService.conversation.findFirst({
+      where: {
+        id,
+      },
+    });
   };
 }

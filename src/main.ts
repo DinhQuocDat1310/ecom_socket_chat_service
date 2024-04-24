@@ -3,7 +3,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-// import { WebSocketAdapter } from './gateway/gateway.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,14 +19,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/socket', app, document);
   app.useGlobalPipes(new ValidationPipe());
-
-  // const adapter = new WebSocketAdapter(app);
-  // app.useWebSocketAdapter(adapter);
   const rmqService = app.get<RabbitMQService>(RabbitMQService);
   app.connectMicroservice(rmqService.getOptions('SOCKET'));
-  app.enableCors({
-    origin: 'http://localhost:3000',
-  });
+  app.enableCors({ origin: '*' });
   await app.startAllMicroservices();
   await app.listen(process.env.PORT);
 }

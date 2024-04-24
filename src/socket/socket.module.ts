@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { MessagingGateway } from './websocket.gateway';
 import { MessagesService } from 'src/messages/messages.service';
 import { RabbitMQModule } from 'src/libs/common/src';
 import {
@@ -7,6 +6,7 @@ import {
   USER_SERVICE,
 } from 'src/messages/constants/service';
 import { PrismaService } from 'src/prisma/service';
+import { SocketGateway } from './socket.gateway';
 
 @Module({
   imports: [
@@ -17,6 +17,6 @@ import { PrismaService } from 'src/prisma/service';
       name: NOTIFICATION_SERVICE,
     }),
   ],
-  providers: [MessagingGateway, MessagesService, PrismaService],
+  providers: [MessagesService, PrismaService, SocketGateway],
 })
 export class GatewayModule {}

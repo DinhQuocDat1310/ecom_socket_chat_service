@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MessagesModule } from './messages/messages.module';
 import { ConfigModule } from '@nestjs/config';
-import { GatewayModule } from './gateway/gateway.module';
+import { GatewayModule } from './socket/socket.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
